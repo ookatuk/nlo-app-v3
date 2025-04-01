@@ -1,15 +1,25 @@
-import argparse
+import base64
+import hashlib
 import json
 import os
+import platform
 import subprocess
 import sys
 import traceback
+from logging import config, getLogger
 
 import i18n
+import psutil  # 追記
 import requests
+from cryptography.fernet import Fernet
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
-                               QLabel, QMainWindow, QMessageBox, QPushButton,
+                               QMainWindow, QMessageBox, QPushButton,
                                QStackedWidget, QVBoxLayout)
+
+# constant
+
+VERSION = "v3.0.0-closed-test-alpha"
+
 
 # Erorr list
 
@@ -18,7 +28,7 @@ class PageNotFound(BaseException):
     pass
 
 
-# constant setting
+# setting
 i18n.set("skip_locale_root_data", True)
 i18n.set("file_format", "json")
 i18n.set("filename_format", "{locale}.{format}")
@@ -30,7 +40,35 @@ IS_PY = sys.argv[0].split(".")[-1] == "py"
 MODPACK_PATH = os.path.join(EXE_PATH, "mod")
 
 
+with open(os.path.join(EXE_PATH,
+                       "data",
+                       "config",
+                       "logger.json"),
+          encoding="utf-8") as f:
+    config.dictConfig(json.load(f))
+
+logger = getLogger("main")
+
+logger.info(f"""
+path: {EXE_PATH}
+is_py: {IS_PY}
+modpack_path: {MODPACK_PATH}
+""")
+
 # Function
+
+
+def check_setting_file(dir):
+    if not os.path.isdir(os.path.join(dir, "data")):
+        return False
+    if not os.path.isdir(os.path.join(dir, "data", "setting")):
+        return False
+
+    setting_dir = os.path.join(dir, "data", "setting")
+
+    if not os.path.isfile(os.path.join(setting_dir, "Language.json")):
+        return False
+    return True
 
 
 def restart():
@@ -38,11 +76,215 @@ def restart():
     subprocess.Popen(args)
     sys.exit()
 
+
+def get_device_fingerprint():
+    """
+    jen encrypt code
+    """
+    device_info = {
+        "os_name": platform.system(),
+        "cpu_cores": psutil.cpu_count(logical=False),
+        "total_memory": psutil.virtual_memory().total,
+        "disk_device": psutil.disk_partitions()[0].device,
+        "disk_fstype": psutil.disk_partitions()[0].fstype,
+    }
+    device_string = (
+        json.dumps(
+            device_info,
+            sort_keys=True
+            )
+        ).encode('utf-8')
+    hash_hex = hashlib.blake2b(device_string, digest_size=32).hexdigest()
+
+    hash_bytes = bytes.fromhex(hash_hex)
+
+    urlsafe_base64 = base64.urlsafe_b64encode(hash_bytes)
+
+    return urlsafe_base64
+
 # class
 
 
+class nlo_acc:
+    class name:
+        def set(name):
+            fer = Fernet(get_device_fingerprint())
+            encoded = fer.encrypt(name.encode("utf-8")).decode("utf-8")
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "r",
+                      encoding="utf-8") as f:
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+
+            tex["name"] = encoded
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "w",
+                      encoding="utf-8") as f:
+                tex = base64.b85encode(json.dumps(tex).encode("utf-8")
+                                       ).decode("utf-8")
+                f.write(tex)
+
+        def get():
+            fer = Fernet(get_device_fingerprint())
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "r",
+                      encoding="utf-8") as f:
+
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+            name = tex["name"]
+            return fer.decrypt(name.encode("utf-8")).decode("utf-8")
+
+    class password:
+        def set(password):
+            fer = Fernet(get_device_fingerprint())
+            encoded = fer.encrypt(password.encode("utf-8")).decode("utf-8")
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "r",
+                      encoding="utf-8") as f:
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+
+            tex["password"] = encoded
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "w",
+                      encoding="utf-8") as f:
+                tex = base64.b85encode(json.dumps(tex).encode("utf-8")
+                                       ).decode("utf-8")
+                f.write(tex)
+
+        def get():
+            fer = Fernet(get_device_fingerprint())
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "acc.json"),
+                      "r",
+                      encoding="utf-8") as f:
+
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+            password = tex["password"]
+            return fer.decrypt(password.encode("utf-8")).decode("utf-8")
+
+
+class nlo_api:
+    class url:
+        def set(url):
+            fer = Fernet(get_device_fingerprint())
+            encoded = fer.encrypt(url.encode("utf-8")).decode("utf-8")
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "r",
+                      encoding="utf-8") as f:
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+
+            tex["url"] = encoded
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "w",
+                      encoding="utf-8") as f:
+                tex = base64.b85encode(json.dumps(tex).encode("utf-8")
+                                       ).decode("utf-8")
+                f.write(tex)
+
+        def get():
+            fer = Fernet(get_device_fingerprint())
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "r",
+                      encoding="utf-8") as f:
+
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+            key = tex["url"]
+            return fer.decrypt(key.encode("utf-8")).decode("utf-8")
+
+    class key:
+        def set(key):
+            fer = Fernet(get_device_fingerprint())
+            encoded = fer.encrypt(key.encode("utf-8")).decode("utf-8")
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "r",
+                      encoding="utf-8") as f:
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+
+            tex["key"] = encoded
+
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "w",
+                      encoding="utf-8") as f:
+                tex = base64.b85encode(json.dumps(tex).encode("utf-8")
+                                       ).decode("utf-8")
+                f.write(tex)
+
+        def get():
+            fer = Fernet(get_device_fingerprint())
+            with open(os.path.join(EXE_PATH,
+                                   "data",
+                                   "setting",
+                                   "api.json"),
+                      "r",
+                      encoding="utf-8") as f:
+
+                tex = base64.b85decode(f.read())
+                tex = json.loads(tex)
+            key = tex["key"]
+            return fer.decrypt(key.encode("utf-8")).decode("utf-8")
+
+
+class api:
+    pass
+
+
 class request:
-    def post(self, url: str, data: dict):
+    def post(self, _url: str | api, data: dict):
+        if _url == api:
+            url = nlo_api.url.get()
+            data["apikey"] = nlo_api.key.get()
+            data["accunt"] = {
+                "name": nlo_acc.name.get(),
+                "passowrd": nlo_acc.password.get()
+            }
+        else:
+            url = _url
+
         req = requests.post(url, json.dumps(data))
         return req.content.decode()
 
@@ -84,11 +326,11 @@ class LanguagePack:
         language_pack_list: list
             language pack
         """
-        dirs = [LanguagePack(os.path.join(path, f)) for f in os.listdir(path)
-                if os.path.isdir(os.path.join(path, f)) and
-                LanguagePack(os.path.join(path, f)).check()]
-        for i in dirs:
-            i.check()
+        dirs = []
+        for dir2 in os.listdir(path):
+            languages = LanguagePack(os.path.join(path, dir2))
+            if languages.check():
+                dirs.append(languages)
         return dirs
 
     def load(self) -> None:
@@ -98,10 +340,7 @@ class LanguagePack:
         i18n.load_path.append(os.path.join(self.path, "data"))
 
     def set(self, _language=None):
-        if _language is None:
-            language = self.pack_data["locale"][0]
-        else:
-            language = _language
+        language = _language or self.pack_data["locale"][0]
         i18n.set('locale', language)
 
     def _check_path(self, path):
@@ -255,18 +494,18 @@ class QPageber(QVBoxLayout):
                 button.clicked.connect(lambda _,
                                        tex=i: self.setFolder(tex))
 
-        for filename, i in self.page2.items():
+        for filename, folder in self.page2.items():
             frame = QFrame()
             layouts = QHBoxLayout()
             frame.setLayout(layouts)
-            for ii in i:
-                text = ii.name
-                if (not ii.hide) or ii.entable:
+            for page in folder:
+                text = page.name
+                if (not page.hide) or page.entable:
                     button = QPushButton(text)
                     layouts.addWidget(button)
-                    button.setEnabled(ii.entable)
+                    button.setEnabled(page.entable)
                     button.clicked.connect(lambda _,
-                                           tex=ii: self.setPage(tex))
+                                           tex=page: self.setPage(tex))
             self.layout2.addWidget(frame)
             self.file_dict[filename] = frame
 
@@ -308,6 +547,12 @@ class LanguageManager:
             if i.pack_data["name"] == decoded_json["name"]:
                 i.load()
                 i.set(decoded_json["language"])
+                return
+
+        for i in languages:
+            if i.pack_data["name"] == "default language pack":
+                i.load()
+                i.set("en")
                 return
         return
 
@@ -360,22 +605,22 @@ class MainWindow(QMainWindow):
         self.pages["home"] = Folder(i18n.t("folders.home.title"))
         self.page.addFolder(self.pages["home"])
 
-        self.pages["news"] = Folder(i18n.t("folders.news.title"))
-        self.page.addFolder(self.pages["news"])
+        self.pages["setting"] = Folder(i18n.t("folders.setting.title"))
+        self.page.addFolder(self.pages["setting"])
 
         self.jen_mainwindow()
 
-        self.jen_news_news()
+        self.jen_sett_news()
 
         self.page.jen()
 
-    def jen_news_news(self):
+    def jen_sett_news(self):
         frame = QFrame()
         layout = QGridLayout()
         frame.setLayout(layout)
-        self.page.addPage(Page(i18n.t("folders.news.pages.news.title"),
+        self.page.addPage(Page(i18n.t("folders.setting.pages.general.title"),
                                frame),
-                          self.pages["news"])
+                          self.pages["setting"])
 
     def jen_mainwindow(self):
         frame = QFrame()
@@ -388,11 +633,21 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":  # start script
     try:
+        logger.info("stating")
+        if not check_setting_file(EXE_PATH):
+            logger.critical("setting file not found")
+            raise BaseException(i18n.t("errors.settingnotfound"))
+
+        logger.debug("creating system")
         app = QApplication(sys.argv)
+        logger.debug("loading language pack")
         languageManager = LanguageManager()
         languageManager.load_language_pack()
+
+        logger.debug("creating window...")
         window = MainWindow()
         window.show()
+        logger.debug("ended!")
         sys.exit(app.exec())
     except SystemExit:
         pass
@@ -408,8 +663,12 @@ if __name__ == "__main__":  # start script
         etype, value, tb = sys.exc_info()
         error_text += "".join(traceback.format_exception(etype, value, tb))
 
+        logger.critical("".join(traceback.format_exception(etype, value, tb)))
+
         error_text += "```\n\nI would be grateful if you could file a bug \
 report!"
+
+        logger.debug("creating message...")
 
         crit = QMessageBox()
         crit.setWindowTitle("ERROR!")

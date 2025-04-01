@@ -8,13 +8,16 @@
                 }
             }
         },
-        "news": {
-            "title": "ニュース",
+        "setting": {
+            "title": "設定",
             "pages": {
-                "news": {
-                    "title": "ニュース"
+                "general": {
+                    "title": "一般"
                 }
             }
         }
+    },
+    "errors": {
+        "settingnotfound": "設定ファイルが見つかりません。"
     }
 }
