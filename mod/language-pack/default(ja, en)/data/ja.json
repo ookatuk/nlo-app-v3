@@ -1,0 +1,20 @@
+{
+    "folders": {
+        "home": {
+            "title": "ホーム",
+            "pages": {
+                "home": {
+                    "title": "ホーム"
+                }
+            }
+        },
+        "news": {
+            "title": "ニュース",
+            "pages": {
+                "news": {
+                    "title": "ニュース"
+                }
+            }
+        }
+    }
+}
