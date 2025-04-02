@@ -1,0 +1,48 @@
+{
+    "folders": {
+        "home": {
+            "title": "ホーム",
+            "pages": {
+                "home": {
+                    "title": "ホーム"
+                }
+            }
+        },
+        "setting": {
+            "title": "設定",
+            "Decision": "決定",
+            "pages": {
+                "accunt": {
+                    "title": "アカウント",
+                    "accunt": "アカウント",
+                    "input_accunt_name": "アカウント名: ",
+                    "input_accunt_password": "パスワード: ",
+                    "api": "api",
+                    "input_api": "url: ",
+                    "input_apikey": "apikey: "
+                },
+                "language": {
+                    "title": "言語",
+                    "name": "パックネーム",
+                    "locale": "対応言語",
+                    "version": "対応バージョン",
+                    "packversion": "パックバージョン",
+                    "caveat": "警告",
+                    "warn": {
+                        "ver+": "対応バージョンがこのアプリのバージョンより最新です。",
+                        "ver-": "対応バージョンがこのアプリのバージョンより古いです。",
+                        "error": "不正なバージョンです。データを取得できませんでした。",
+                        "none": "警告はありません。"
+                    }
+                }
+            }
+        }
+    },
+    "errors": {
+        "settingnotfound": "設定ファイルが見つかりません。"
+    },
+    "restarts": {
+        "restart_text": "残り%{time}秒で再起動します。",
+        "restart": "再起動"
+    }
+}

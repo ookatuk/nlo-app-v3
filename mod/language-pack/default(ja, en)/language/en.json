@@ -1,0 +1,48 @@
+{
+    "folders": {
+        "home": {
+            "title": "Home",
+            "pages": {
+                "home": {
+                    "title": "Home"
+                }
+            }
+        },
+        "setting": {
+            "title": "Settings",
+            "Decision": "Decision",
+            "pages": {
+                "accunt": {
+                    "title": "Account",
+                    "accunt": "Account",
+                    "input_accunt_name": "Account Name: ",
+                    "input_accunt_password": "Password: ",
+                    "api": "API",
+                    "input_api": "URL: ",
+                    "input_apikey": "API Key: "
+                },
+                "language": {
+                    "title": "Language",
+                    "name": "Pack Name",
+                    "locale": "Supported Language",
+                    "version": "Supported Version",
+                    "packversion": "Pack Version",
+                    "caveat": "Warning",
+                    "warn": {
+                        "ver+": "The supported version is newer than this app's version.",
+                        "ver-": "The supported version is older than this app's version.",
+                        "error": "Invalid version. Could not retrieve data.",
+                        "none": "No warnings."
+                    }
+                }
+            }
+        }
+    },
+    "errors": {
+        "settingnotfound": "Settings file not found."
+    },
+    "restarts": {
+        "restart_text": "Restarting in %{time} seconds.",
+        "restart": "Restart"
+    }
+}

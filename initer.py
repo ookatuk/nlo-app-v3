@@ -44,19 +44,20 @@ log_conf = {
 
 lan_conf = {
     "name": "default language pack",
-    "language": "ja"
+    "language": "en"
 }
 
 
 def check():
     DATAPATH = os.path.join(PATH, "data")
     if not os.path.isdir(DATAPATH):
+        os.mkdir(DATAPATH)
         os.mkdir(os.path.join(DATAPATH, "config"))
         os.mkdir(os.path.join(DATAPATH, "setting"))
         with open(os.path.join(DATAPATH, "config", "logger.json"),
                   "w",
                   encoding="utf-8") as f:
-            json.dump(f, log_conf)
+            json.dump(log_conf, f)
 
         with open(os.path.join(DATAPATH, "setting", "acc.json"),
                   "w",
@@ -68,7 +69,7 @@ def check():
                   encoding="utf-8") as f:
             f.write("dwl")
 
-        with open(os.path.join(DATAPATH, "setting", "api.json"),
+        with open(os.path.join(DATAPATH, "setting", "Language.json"),
                   "w",
                   encoding="utf-8") as f:
-            json.dump(f, lan_conf)
+            json.dump(lan_conf, f)

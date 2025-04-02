@@ -2,6 +2,12 @@
     "name": "default language pack",
     "locale": ["ja", "en"],
     "display_locale": ["ja-JP", "en-US"],
-    "compatibleAppVersion": "v3.0.0-closed-test-alpha",
-    "packVersion": 0
+    "compatibleAppVersion": [
+        "v3.0.0-closed-test-alpha.2",
+        "v3.0.0-closed-test-alpha.2"
+    ],
+    "packVersion": [
+        0,
+        0
+    ]
 }
