@@ -1,4 +1,3 @@
 __pycache__/
 _tools/
-_data/
-_temp/
+data/

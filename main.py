@@ -9,16 +9,18 @@ import traceback
 from logging import config, getLogger
 
 import i18n
-import psutil  # 追記
+import psutil
 import requests
 from cryptography.fernet import Fernet
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
                                QMainWindow, QMessageBox, QPushButton,
                                QStackedWidget, QVBoxLayout)
 
+import initer
+
 # constant
 
-VERSION = "v3.0.0-closed-test-alpha"
+VERSION = "v3.0.0-closed-test-alpha.2"
 
 
 # Erorr list
@@ -102,7 +104,7 @@ def get_device_fingerprint():
 
     return urlsafe_base64
 
-# class
+# base class
 
 
 class nlo_acc:
@@ -291,6 +293,9 @@ class request:
     def get(self, url: str):
         req = requests.get(url)
         return req.content.decode()
+
+
+# main class
 
 
 class LanguagePack:
@@ -610,17 +615,18 @@ class MainWindow(QMainWindow):
 
         self.jen_mainwindow()
 
-        self.jen_sett_news()
+        self.jen_sett_setting()
 
         self.page.jen()
 
-    def jen_sett_news(self):
+    def jen_sett_setting(self):
         frame = QFrame()
         layout = QGridLayout()
         frame.setLayout(layout)
         self.page.addPage(Page(i18n.t("folders.setting.pages.general.title"),
                                frame),
                           self.pages["setting"])
+        
 
     def jen_mainwindow(self):
         frame = QFrame()
@@ -633,6 +639,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":  # start script
     try:
+        logger.info("initing...")
+
+        initer.check()
+
         logger.info("stating")
         if not check_setting_file(EXE_PATH):
             logger.critical("setting file not found")
